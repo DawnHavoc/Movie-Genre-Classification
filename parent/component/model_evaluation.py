@@ -160,7 +160,7 @@ def main():
     
     svm_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
     # bert_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
-    lr_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
+    # lr_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
 
 if __name__ == "__main__":
     main()
