@@ -8,6 +8,7 @@ from nltk.stem import PorterStemmer
 import nltk
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
+from sklearn.preprocessing import LabelEncoder
 
 
 import os
@@ -54,8 +55,8 @@ def process_genre(genre,column):
     # Remove emoji
     genre[column] = genre[column].apply(remove_emojis)
     # label encoding the genre column
-    # label_encoder = LabelEncoder()
-    # genre[label_encoded_column] = label_encoder.fit_transform(genre[column])
+    label_encoder = LabelEncoder()
+    genre[label_encoded_column] = label_encoder.fit_transform(genre[column])
 
 def process_plot(plot_description,column):   
     
@@ -113,7 +114,7 @@ def getfile():
             test_set_filename=filename 
     return train_set_filename,test_set_filename
 
-def batchprocessing(data,filename):
+def batch_processing(data,filename):
   
     batch_size = 1000  
     column_to_clean = 'DESCRIPTION'
@@ -197,11 +198,10 @@ def main():
 
     train_set_file,test_set_file=getfile()
     
-    processed_train=batchprocessing(pd.read_csv(train_set_file),os.path.splitext(os.path.basename(train_set_file))[0])
-    processed_test=batchprocessing(pd.read_csv(test_set_file),os.path.splitext(os.path.basename(test_set_file))[0])
+    processed_train=batch_processing(pd.read_csv(train_set_file),os.path.splitext(os.path.basename(train_set_file))[0])
+    processed_test=batch_processing(pd.read_csv(test_set_file),os.path.splitext(os.path.basename(test_set_file))[0])
     # train_tfidf,test_tfidf=tf_idf(processed_train,processed_test,column_to_clean,feature_name_column)
-
-    
+   
     
     processed_train.to_csv(train_file, index=False)
     processed_test.to_csv(test_file,index=False)

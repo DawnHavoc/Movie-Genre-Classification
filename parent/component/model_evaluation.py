@@ -11,7 +11,6 @@ import numpy as np
 from sklearn.metrics import accuracy_score,classification_report
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from sklearn.preprocessing import LabelEncoder
 
 import torch
 import tensorflow as tf
@@ -147,13 +146,11 @@ def getfile():
 def main():
     train_set_file,test_set_file,test_set_soln=getfile()
       
-      # Label encoding the genres
-    label_encoder = LabelEncoder()
-    pd.read_csv(train_set_file)['GENRE-ENCODED']=label_encoder.fit_transform(pd.read_csv(train_set_file)['GENRE'])
-    pd.read_csv(test_set_soln)['GENRE-ENCODED'] =label_encoder.fit_transform(pd.read_csv(test_set_soln)['GENRE'])
+      
+   
     
 
-    tfidf_vectorizer = TfidfVectorizer(max_features=5000)
+    tfidf_vectorizer = TfidfVectorizer(max_features=1000)
     X_train_tfidf = tfidf_vectorizer.fit_transform(pd.read_csv(train_set_file)['DESCRIPTION'])
     X_test_tfidf = tfidf_vectorizer.transform(pd.read_csv(test_set_file)['DESCRIPTION'])
 
