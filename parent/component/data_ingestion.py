@@ -6,7 +6,7 @@ import csv
 def read_data():
    
     dataset_identifier = 'hijest/genre-classification-dataset-imdb'
-    destination_folder = 'D:/Projects/Movie_Genre_Classification/datasets'
+    destination_folder = 'D:/Projects/Movie-Genre-Classification/datasets'
 
     # Run the Kaggle command to download the dataset
     command = f'kaggle datasets download -d {dataset_identifier} -p {destination_folder} --force'
