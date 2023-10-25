@@ -193,8 +193,8 @@ def tf_idf(train_data, test_data, column_to_clean, feature_name_column):
 def main():
     
   
-    train_file='D:/Projects/Movie_Genre_Classification/datasets/Genre Classification Dataset/train_processed.csv'
-    test_file='D:/Projects/Movie_Genre_Classification/datasets/Genre Classification Dataset/test_processed.csv'
+    train_file='D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/train_processed.csv'
+    test_file='D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/test_processed.csv'
 
     train_set_file,test_set_file=getfile()
     

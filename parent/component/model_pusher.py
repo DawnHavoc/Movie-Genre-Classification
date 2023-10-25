@@ -16,7 +16,7 @@ def lr_model(train_data,test_data,test_data_soln,X_train,X_test):
     logistic_regression_model.fit(X_train,  train_data['GENRE-ENCODED'])
 
     # Step 4: Save the trained model to a pickle file
-    with open('D:/Projects/Movie_Genre_Classification/datasets/Genre Classification Dataset/linear_regression_model.pkl', 'wb') as file:
+    with open('D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/linear_regression_model.pkl', 'wb') as file:
         pickle.dump(logistic_regression_model, file)
 
     # Predict the genres for the test data

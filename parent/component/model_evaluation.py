@@ -40,7 +40,7 @@ def svm_model(train_data,test_data,test_data_soln,X_train,X_test):
 
   
     # Save the results to a CSV file
-    test_data.to_csv('D:/Projects/Movie_Genre_Classification/datasets/Genre Classification Dataset/result.csv', index=False)
+    test_data.to_csv('D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/result.csv', index=False)
 
 # def bert_model(train_data,test_data,test_data_soln,X_train,X_test):
 #     # Load a pre-trained BERT model and tokenizer
