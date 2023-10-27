@@ -2,11 +2,22 @@ import os
 import zipfile
 import subprocess
 import csv
+import importlib.util
+
+
+# Specify the absolute path to source_file.py
+source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
+# sys.path.append(source_folder_path)
+
+# Use importlib to import source_file
+spec = importlib.util.spec_from_file_location("__init__", source_file_path)
+source_file = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(source_file)
 
 def read_data():
    
-    dataset_identifier = 'hijest/genre-classification-dataset-imdb'
-    destination_folder = 'D:/Projects/Movie-Genre-Classification/datasets'
+    dataset_identifier = source_file.DATASET_IDENTIFIER
+    destination_folder = source_file.DATASET_DESTINATION_PATH
 
     # Run the Kaggle command to download the dataset
     command = f'kaggle datasets download -d {dataset_identifier} -p {destination_folder} --force'
@@ -38,12 +49,12 @@ def convert_to_csv(destination_folder):
     file_list = os.listdir(destination_folder)
     text_files = [file for file in file_list if file.endswith('.txt')]
 
-    # Specify the delimiter used in the text file (e.g., pipe "|")
+    # Specify the delimiter used in the text file 
     text_file_delimiter = ":::"
     
     # Specify the character encoding 
-    input_encoding='ISO-8859-1'
-    output_encoding = 'utf-8'
+    input_encoding=source_file.INPUT_ENCODING
+    output_encoding =source_file.OUTPUT_ENCODING
 
     for text_file in text_files:
         file_path = os.path.join(destination_folder, text_file)
@@ -57,7 +68,7 @@ def convert_to_csv(destination_folder):
                 else:
                     writer.writerow(["ID", "TITLE","DESCRIPTION","GENRE"])
 
-                # Read each line from the text file and split it by the specified delimiter (e.g., '|')
+                # Read each line from the text file and split it by the specified delimiter
                 for line in text_file:
                     # Remove leading/trailing whitespace and split the line
                     values = line.strip().split(text_file_delimiter)

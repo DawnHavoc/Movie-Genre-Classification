@@ -15,6 +15,17 @@ import os
 import pandas as pd
 import pathlib 
 
+import importlib.util
+
+
+# Specify the absolute path to source_file.py
+source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
+
+
+# Use importlib to import source_file
+spec = importlib.util.spec_from_file_location("__init__", source_file_path)
+source_file = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(source_file)
 
 # Download the NLTK data needed for tokenization and stopwords
 nltk.download('punkt')
@@ -45,7 +56,7 @@ def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
 
 def process_genre(genre,column):
-    label_encoded_column='GENRE-ENCODED'
+    label_encoded_column=source_file.LABEL_ENCODED_COLUMN
      #  Text Lowercasing
     genre[column] = genre[column].str.lower()
     # Removing Special Characters and Punctuation
@@ -107,18 +118,21 @@ def getfile():
    
     train_set_filename=""
     test_set_filename=""
+    test_set_soln_filename=""
     for filename in path:
-        if(os.path.basename(filename)=='train_data.csv'): #filename with extension
+        if(os.path.basename(filename)==source_file.TRAIN_SET): #filename with extension
             train_set_filename=filename
-        elif(os.path.basename(filename)=='test_data.csv'): 
+        elif(os.path.basename(filename)==source_file.TEST_SET): 
             test_set_filename=filename 
-    return train_set_filename,test_set_filename
+        elif(os.path.basename(filename)==source_file.TEST_SET_SOLN): 
+            test_set_soln_filename=filename 
+    return train_set_filename,test_set_filename,test_set_soln_filename
 
 def batch_processing(data,filename):
   
     batch_size = 1000  
-    column_to_clean = 'DESCRIPTION'
-    column_to_encode='GENRE'
+    column_to_clean = source_file.COLUMN_TO_CLEAN
+    column_to_encode=source_file.COLUMN_TO_ENCODE
     processed_data=pd.DataFrame()
     
     if filename=='train_data':
@@ -136,6 +150,14 @@ def batch_processing(data,filename):
             # Get the current batch of data
             batch_data = data.iloc[batch_start:batch_end]
             processed_data = pd.concat([processed_data, process_plot(batch_data,column_to_clean)]) 
+    
+    elif filename=='test_data_solution':
+        for batch_start in range(0, len(data), batch_size):
+            batch_end = min(batch_start + batch_size, len(data))
+        
+            # Get the current batch of data
+            batch_data = data.iloc[batch_start:batch_end]
+            processed_data = pd.concat([processed_data, batch_data,process_genre(batch_data,column_to_encode)]) 
           
     
     return processed_data
@@ -151,60 +173,26 @@ def batch_processing(data,filename):
 
     Addressing Data Imbalance
     Use resampling techniques like oversampling (e.g., SMOTE) or undersampling.
-  
-def tf_idf(train_data, test_data, column_to_clean, feature_name_column):
-    # Create a TF-IDF vectorizer
-    max_features = 1000  # You can adjust this value as needed
-    tfidf_vectorizer = TfidfVectorizer(max_features=max_features)
-
-    # Create empty lists to store TF-IDF matrices and feature names
-    tfidf_strings_train = []  # Store TF-IDF values as strings for training data
-    tfidf_strings_test = []   # Store TF-IDF values as strings for test data
-    feature_names_list = []
-
-    for dataset, tfidf_strings in [(train_data, tfidf_strings_train), (test_data, tfidf_strings_test)]:
-        for row_index, row in dataset.iterrows():
-            # Fit and transform the text data for the current row using TF-IDF
-            tfidf_matrix = tfidf_vectorizer.fit_transform([row[column_to_clean]])
-
-            # Convert the TF-IDF values to a string using a delimiter (e.g., semicolon)
-            # tfidf_values = ";".join(map(str, tfidf_matrix.toarray().flatten()))
-            tfidf_values =  tfidf_matrix
-
-            # Get the feature names (unique words) from the vectorizer
-            feature_names = tfidf_vectorizer.get_feature_names_out()
-
-            # Append the TF-IDF values and feature names to the respective lists
-            tfidf_strings.append(tfidf_values)
-            feature_names_list.append(feature_names)
-
-    # Create new columns for the TF-IDF values as strings in both training and test dataframes
-    train_data['TF-IDF'] = tfidf_strings_train
-    test_data['TF-IDF'] = tfidf_strings_test
-
-    # Create a new DataFrame for the feature names
-    feature_names_df = pd.DataFrame({feature_name_column: feature_names_list})
-
-
-    return train_data, test_data
-"""
+  """
 
 
 def main():
     
   
-    train_file='D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/train_processed.csv'
-    test_file='D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/test_processed.csv'
+    train_file=source_file.TRAIN_SET_PROCESSED_PATH
+    test_file=source_file.TEST_SET_PROCESSED_PATH
+    test_soln_file=source_file.TEST_SET_SOLN_PROCESSED_PATH
 
-    train_set_file,test_set_file=getfile()
+    train_set_file,test_set_file,test_set_soln_filename=getfile()
     
     processed_train=batch_processing(pd.read_csv(train_set_file),os.path.splitext(os.path.basename(train_set_file))[0])
     processed_test=batch_processing(pd.read_csv(test_set_file),os.path.splitext(os.path.basename(test_set_file))[0])
+    processed_test_soln=batch_processing(pd.read_csv(test_set_soln_filename),os.path.splitext(os.path.basename(test_set_soln_filename))[0])
     # train_tfidf,test_tfidf=tf_idf(processed_train,processed_test,column_to_clean,feature_name_column)
    
-    
     processed_train.to_csv(train_file, index=False)
-    processed_test.to_csv(test_file,index=False)
+    processed_test.to_csv(test_file, index=False)
+    processed_test_soln.to_csv(test_soln_file,index=False)
 
 
    
