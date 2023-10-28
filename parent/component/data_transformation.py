@@ -14,7 +14,6 @@ from sklearn.preprocessing import LabelEncoder
 import os
 import pandas as pd
 import pathlib 
-
 import importlib.util
 
 
@@ -28,8 +27,8 @@ source_file = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(source_file)
 
 # Download the NLTK data needed for tokenization and stopwords
-nltk.download('punkt')
-nltk.download('stopwords')
+nltk.download(source_file.NLTK_DOWNLOAD)
+nltk.download(source_file.NLTK_STOPWORDS)
 
 def remove_html_tags(text):
     soup = BeautifulSoup(text, "html.parser")

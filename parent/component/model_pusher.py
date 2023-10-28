@@ -5,37 +5,36 @@ import pathlib
 from sklearn.metrics import accuracy_score,classification_report
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
-
+from sklearn.preprocessing import LabelEncoder
 import pickle
 
-def lr_model(train_data,test_data,test_data_soln,X_train,X_test):
+import importlib.util
+
+
+# Specify the absolute path to source_file.py
+source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
+
+
+# Use importlib to import source_file
+spec = importlib.util.spec_from_file_location("__init__", source_file_path)
+source_file = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(source_file)
+
+def lr_model(train_data,test_data_soln,X_train,X_test):
    
     
         # Create and train the Logistic Regression model
     logistic_regression_model = LogisticRegression(max_iter=1000)
-    logistic_regression_model.fit(X_train,  train_data['GENRE-ENCODED'])
+    logistic_regression_model.fit(X_train,  train_data[source_file.LABEL_ENCODED_COLUMN])
 
     # Step 4: Save the trained model to a pickle file
-    with open('D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/linear_regression_model.pkl', 'wb') as file:
+    with open('D:/Projects/Movie-Genre-Classification/models/linear_regression_model.pkl', 'wb') as file:
         pickle.dump(logistic_regression_model, file)
-
-    # Predict the genres for the test data
-    y_pred = logistic_regression_model.predict(X_test)
-
-    # # Decode the label-encoded predictions
-    # y_pred_decoded = label_encoder.inverse_transform(y_pred)
-
-    # Calculate accuracy and display classification report
-    accuracy = accuracy_score(test_data_soln['GENRE-ENCODED'], y_pred)
-    # report = classification_report(test_data_soln['GENRE-ENCODED'], y_pred, target_names=label_encoder.classes_)
-
-    print(f"Accuracy: {accuracy * 100:.2f}%")
-    # print(report)
 
 
 def getfile():
     path=[]
-    for dirname, _, filenames in os.walk('D:/Projects'): #'Projects' is the folder name in which the required files are saved
+    for dirname, _, filenames in os.walk('D:/Projects/Movie-Genre-Classification'): #'Projects' is the folder name in which the required files are saved
         for filename in filenames:
             if(pathlib.Path(os.path.join(dirname, filename)).suffix =='.csv'):
                 path.append(os.path.join(dirname, filename))
@@ -60,10 +59,24 @@ def main():
     X_train_tfidf = tfidf_vectorizer.fit_transform(pd.read_csv(train_set_file)['DESCRIPTION'])
     X_test_tfidf = tfidf_vectorizer.transform(pd.read_csv(test_set_file)['DESCRIPTION'])
 
+    with open('D:/Projects/Movie-Genre-Classification/models/tfidf_vectorizer.pkl', 'wb') as vectorizer_file:
+        pickle.dump(tfidf_vectorizer, vectorizer_file)
+
     
-    # svm_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
-    # bert_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
-    lr_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
+        # Initialize a label encoder
+    label_encoder = LabelEncoder()
+
+    # Fit the encoder and transform the labels
+    train_labels = label_encoder.fit_transform(pd.read_csv(train_set_file)['GENRE'])
+    test_labels = label_encoder.fit_transform(pd.read_csv(test_set_soln)['GENRE'])
+    
+    # Open the file in binary write mode and save the label encoder
+    with open('D:/Projects/Movie-Genre-Classification/models/label_encoding.pkl', 'wb') as file:
+        pickle.dump(label_encoder, file)
+
+    
+    
+    lr_model(pd.read_csv(train_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
 
 if __name__ == "__main__":
     main()

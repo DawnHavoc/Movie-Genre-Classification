@@ -2,69 +2,95 @@
 import pickle
 from flask import Flask, request, render_template
 
+import re
+import string
+from nltk.corpus import stopwords
+
+from nltk.stem import PorterStemmer
 import nltk
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
-from sklearn.preprocessing import LabelEncoder
 
-# Initialize the Flask app
-app = Flask(__name)
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Load the trained model from the pickle file
-with open('D:/Projects/Movie_Genre_Classification/datasets/Genre Classification Dataset/linear_regression_model.pkl', 'rb') as file:
+# Download the NLTK data needed for tokenization and stopwords
+nltk.download('punkt')
+nltk.download('stopwords')
+
+app = Flask(__name__, template_folder='templates')
+
+# Load the pickled model
+with open('D:/Projects/Movie-Genre-Classification/models/linear_regression_model.pkl', 'rb') as file:
     model = pickle.load(file)
 
-def process_plot(plot_description,column):   
-    
-   
-    #  Text Lowercasing
-    plot_description[column] = plot_description[column].str.lower()
+# Load the TF-IDF vectorizer
+tfidf_vectorizer_path = 'D:/Projects/Movie-Genre-Classification/models/tfidf_vectorizer.pkl'
+with open(tfidf_vectorizer_path, 'rb') as file:
+    tfidf_vectorizer = pickle.load(file)
+
+# Open the file in binary read mode and load the label encoder
+with open('D:/Projects/Movie-Genre-Classification/models/label_encoding.pkl', 'rb') as file:
+    loaded_label_encoder = pickle.load(file)
+
+def remove_html_tags(text):
+    soup = BeautifulSoup(text, "html.parser")
+    return soup.get_text()
+
+# Define a function to remove emojis using a regular expression
+def remove_emojis(text):
+    emoji_pattern = re.compile("["
+                           u"\U0001F600-\U0001F64F"  # Emoticons
+                           u"\U0001F300-\U0001F5FF"  # Symbols & pictographs
+                           u"\U0001F680-\U0001F6FF"  # Transport & map symbols
+                           u"\U0001F700-\U0001F77F"  # Alphabetic presentation forms
+                           u"\U0001F780-\U0001F7FF"  # Geometric Shapes
+                           u"\U0001F800-\U0001F8FF"  # Supplemental Arrows-C
+                           u"\U0001F900-\U0001F9FF"  # Supplemental Symbols and Pictographs
+                           u"\U0001FA00-\U0001FA6F"  # Chess Symbols
+                           u"\U0001FA70-\U0001FAFF"  # Symbols and Pictographs Extended-A
+                           u"\U0001F004-\U0001F0CF"  # Additional emoticons
+                           u"\U0001F110-\U0001F251"  # Geometric Shapes Extended
+                           u"\U0001F300-\U0001F5FF"  # Miscellaneous Symbols And Pictographs
+                           u"\U0001F910-\U0001F91E"  # Emoticons
+                           u"\U0001F600-\U0001F64F"  # Emoticons
+                           "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
+
+
+def process_plot(sentence):   
+    # Text Lowercasing
+    sentence = sentence.lower()
     # Removing Special Characters and Punctuation
-    plot_description[column] = plot_description[column].str.replace(f"[{re.escape(string.punctuation)}]", "", regex=True)
-    #  Remove html tags
-    plot_description[column] = plot_description[column].apply(remove_html_tags)
-    # Remove emoji
-    plot_description[column] = plot_description[column].apply(remove_emojis)
+    sentence = re.sub(f"[{re.escape(string.punctuation)}]", "", sentence)
+    # Remove html tags 
+    sentence = remove_html_tags(sentence)
+    # Remove emoji 
+    sentence = remove_emojis(sentence)
     # Tokenization
-    plot_description[column] = plot_description[column].apply(word_tokenize)
-    #  Stop Word Removal
+    tokens = word_tokenize(sentence)
+    # Stop Word Removal
     stop_words = set(stopwords.words('english'))
-    plot_description[column] = plot_description[column].apply(lambda tokens: [word for word in tokens if word not in stop_words])
-
-    # # Step 6: Spelling Correction (using TextBlob)
-    # plot_description[column] = plot_description[column].apply(lambda tokens: " ".join([str(TextBlob(token).correct()) for token in tokens]))
-
-    #  Stemming (using NLTK)
+    tokens = [word for word in tokens if word not in stop_words]
+    # Stemming (using NLTK)
     stemmer = PorterStemmer()
-    plot_description[column] = plot_description[column].apply(lambda tokens: " ".join([stemmer.stem(token) for token in tokens]))
+    tokens = [stemmer.stem(token) for token in tokens]
 
-    """
-    cleaned_text = plot_description.lower()
-    cleaned_text = re.sub(f"[{re.escape(string.punctuation)}]", "", cleaned_text)
-    tokens = word_tokenize(cleaned_text)
-    stop_words = set(stopwords.words('english'))
-    filtered_tokens = [word for word in tokens if word not in stop_words]
-    blob = TextBlob(" ".join(filtered_tokens))
-    corrected_text = str(blob.correct())
-    stemmer = PorterStemmer()
-    stemmed_tokens = [stemmer.stem(word) for word in corrected_text]
-    return " ".join(stemmed_tokens)
-    """
-    return plot_description
-
+    return " ".join(tokens)
 
 # Define a function to preprocess the input and make predictions
 def predict_genre(plot_text):
-    # Perform any necessary preprocessing on the plot text (e.g., text vectorization)
-    # Replace this with your actual preprocessing steps
-    # For simplicity, we're assuming the model accepts a numerical feature, so you might need NLP preprocessing here.
-    plot_vector = ...  # Process the plot text into a numerical feature
-
-    # Make a prediction using the loaded model
-    predicted_genre = model.predict([plot_vector])
+  # Clean and preprocess the input plot
+    cleaned_plot = process_plot(plot_text)
     
-    # Return the predicted genre (you might have a mapping to convert numerical prediction to actual genre)
-    return predicted_genre
+    # Use the pre-trained TF-IDF vectorizer to transform the input text
+    input_tfidf = tfidf_vectorizer.transform([cleaned_plot])
+    
+    predicted_genre = model.predict(input_tfidf)
+  
+    # Now, you can use the loaded label encoder to decode labels
+    decoded_genre = loaded_label_encoder.inverse_transform(predicted_genre)
+    # Return the predicted genre
+    return decoded_genre
 
 # Define a route to handle the HTML form
 @app.route('/', methods=['GET', 'POST'])
@@ -72,9 +98,9 @@ def predict_movie_genre():
     if request.method == 'POST':
         plot_text = request.form['plot']
         predicted_genre = predict_genre(plot_text)
-        return render_template('result.html', predicted_genre=predicted_genre)
+        return render_template('index.html', genres=predicted_genre)
     return render_template('index.html')
 
 # Run the Flask app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

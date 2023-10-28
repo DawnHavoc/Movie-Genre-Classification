@@ -3,7 +3,7 @@ import zipfile
 import subprocess
 import csv
 import importlib.util
-
+import sys
 
 # Specify the absolute path to source_file.py
 source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
@@ -13,6 +13,7 @@ source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../c
 spec = importlib.util.spec_from_file_location("__init__", source_file_path)
 source_file = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(source_file)
+
 
 def read_data():
    
@@ -53,8 +54,10 @@ def convert_to_csv(destination_folder):
     text_file_delimiter = ":::"
     
     # Specify the character encoding 
+    # input_encoding=detect_encoding('D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/train_data.txt')
     input_encoding=source_file.INPUT_ENCODING
     output_encoding =source_file.OUTPUT_ENCODING
+    
 
     for text_file in text_files:
         file_path = os.path.join(destination_folder, text_file)
@@ -75,6 +78,12 @@ def convert_to_csv(destination_folder):
 
                     # Write the split values as separate columns in the CSV file
                     writer.writerow(values)
+# # Function to detect encoding
+# def detect_encoding(file_path):
+#     with open(file_path, 'rb') as file:
+#         rawdata = file.read()
+#         result = chardet.detect(rawdata)
+#     return result['encoding']
 
 def main():
     read_data()

@@ -5,34 +5,57 @@ import pathlib
 from sklearn.metrics import accuracy_score,classification_report
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
-from gensim.models import Word2Vec
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+import importlib.util
+from tqdm import tqdm
 
-def lr_model(train_data,test_data,test_data_soln,X_train,X_test):
+
+# Specify the absolute path to source_file.py
+source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
+
+
+# Use importlib to import source_file
+spec = importlib.util.spec_from_file_location("__init__", source_file_path)
+source_file = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(source_file)
+
+def tune_model(train_data,X_train):
    
-    
-    # Train the Word2Vec model
-    # model = Word2Vec(train_data['DESCRIPTION'], vector_size=100, window=5, min_count=1, sg=0)
-        # Create and train the Logistic Regression model
-    logistic_regression_model = LogisticRegression(max_iter=1000)
-    logistic_regression_model.fit(X_train,  train_data['GENRE-ENCODED'])
+   
+        # Define a range of hyperparameters to search
+        param_grid = {
+            # 'C': [0.001, 0.01, 0.1, 1, 10, 100],  # Inverse of regularization strength
+            # 'penalty': ['l1', 'l2'],  # Regularization type
+            # 'solver': ['liblinear', 'saga']  # Solver algorithm
+            'C': [0.01, 0.1, 1],  # Focus on these values
+            'penalty': ['l1', 'l2'],
+            'solver': ['liblinear', 'saga']
+        }
 
-    # Predict the genres for the test data
-    y_pred = logistic_regression_model.predict(X_test)
+        # Create a Logistic Regression model
+        model = LogisticRegression(max_iter=1000)
 
-    # # Decode the label-encoded predictions
-    # y_pred_decoded = label_encoder.inverse_transform(y_pred)
+        # Perform grid search
+        grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy')
+        grid_search.fit(X_train,  train_data[source_file.LABEL_ENCODED_COLUMN])
 
-    # Calculate accuracy and display classification report
-    accuracy = accuracy_score(test_data_soln['GENRE-ENCODED'], y_pred)
-    # report = classification_report(test_data_soln['GENRE-ENCODED'], y_pred, target_names=label_encoder.classes_)
+        # Get the best hyperparameters
+        return grid_search.best_params_, grid_search.best_estimator_
 
-    print(f"Accuracy: {accuracy * 100:.2f}%")
-    # print(report)
+def train_model(best_model,test_data_soln,X_test):
+    y_pred = best_model.predict(X_test)
+    accuracy = accuracy_score(test_data_soln[source_file.LABEL_ENCODED_COLUMN], y_pred)
+    report = classification_report(test_data_soln[source_file.LABEL_ENCODED_COLUMN], y_pred)
+
+    print("Classification Report of Logistic Regression:")
+    print(report)
+    print(f'Logistic Regression Accuracy: {accuracy}')
+
 
 
 def getfile():
     path=[]
-    for dirname, _, filenames in os.walk('D:/Projects'): #'Projects' is the folder name in which the required files are saved
+    for dirname, _, filenames in os.walk('D:/Projects/Movie-Genre-Classification'): #'Projects' is the folder name in which the required files are saved
         for filename in filenames:
             if(pathlib.Path(os.path.join(dirname, filename)).suffix =='.csv'):
                 path.append(os.path.join(dirname, filename))
@@ -51,17 +74,14 @@ def getfile():
     return train_set_filename,test_set_filename,test_set_soln_filename
 
 def main():
-    train_set_file,test_set_file,test_set_soln=getfile()
-      
-    tfidf_vectorizer = TfidfVectorizer(max_features=5000)
-    X_train_tfidf = tfidf_vectorizer.fit_transform(pd.read_csv(train_set_file)['DESCRIPTION'])
-    X_test_tfidf = tfidf_vectorizer.transform(pd.read_csv(test_set_file)['DESCRIPTION'])
-
-  
     
-    # svm_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
-    # bert_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
-    lr_model(pd.read_csv(train_set_file),pd.read_csv(test_set_file),pd.read_csv(test_set_soln),X_train_tfidf,X_test_tfidf)
+    train_set_file,test_set_file,test_set_soln=getfile()
+        
+    tfidf_vectorizer = TfidfVectorizer(max_features=5000)
+    X_train_tfidf = tfidf_vectorizer.fit_transform(pd.read_csv(train_set_file)[source_file.COLUMN_TO_CLEAN])
+    X_test_tfidf = tfidf_vectorizer.transform(pd.read_csv(test_set_file)[source_file.COLUMN_TO_CLEAN])
 
+    parameters,model=tune_model(pd.read_csv(train_set_file),X_train_tfidf)
+    train_model(model,pd.read_csv(test_set_soln),X_test_tfidf)
 if __name__ == "__main__":
     main()
