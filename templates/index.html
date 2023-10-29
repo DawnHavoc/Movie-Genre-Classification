@@ -1,30 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="D:/Projects/Movie-Genre-Classification/static/css/styles.css">
 </head>
-<body>
-    <div class="header bg-dark text-white py-4 text-center">
-        <h1>Movie Genre Prediction</h1>
+<body style="background-image: url('file:///D:/Projects/Movie-Genre-Classification/static/images/background.jpg');">
+    
+    <div class ="Actual_Header">
+        <div class = "Header">
+          
+            <h1 class= "Heading"> Movie Genre Prediction </h1>
+           
+        </div>
     </div>
-    <div class="background-image" style="background-image: url('static/images/background.jpg');"></div>
-    <div class="container mt-4">
-        <h2 class="mb-4">Predict a Movie's Genre</h2>
+   
+    <div class="CentralPanel" >
+        <div class="center">
+           <h2>Predict a Movie's Genre</h2>
         <form method="post" action="/">
-            <div class="form-group">
-                <textarea name="plot" rows="4" class="form-control" placeholder="Enter movie plot"></textarea>
+            <div >
+                <textarea name="plot" rows="4" class="textarea" placeholder="Enter movie plot"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Predict Genre</button>
+            <button type="submit" class="button">Predict Genre</button>
         </form>
 
-        <h2 class="mt-4">Predicted Genre:</h2>
-        <p class="lead text-primary">{{ genres }}</p>
+        <div class="genre-container">
+            <h2>Predicted Genre:</h2>
+            <p class="genre"> {{genres}} </p>
+        </div>
     </div>
-    <div class="footer bg-dark text-white py-2 text-center">
-        &copy; 2023 YourMovieGenrePrediction.com
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <div class="footer">
+        YourMovieGenrePrediction.com
+    </div>
 </body>
 </html>

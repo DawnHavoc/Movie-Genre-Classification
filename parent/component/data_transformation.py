@@ -1,13 +1,12 @@
 import re
 import string
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
-
-
-import nltk
-from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
+
+from bs4 import BeautifulSoup
 from sklearn.preprocessing import LabelEncoder
 
 
@@ -109,7 +108,7 @@ def process_plot(plot_description,column):
 
 def getfile():
     path=[]
-    for dirname, _, filenames in os.walk('D:/Projects'): #'Projects' is the folder name in which the required files are saved
+    for dirname, _, filenames in os.walk(source_file.ROOT_DIR): #'Projects' is the folder name in which the required files are saved
         for filename in filenames:
             if(pathlib.Path(os.path.join(dirname, filename)).suffix =='.csv'):
                 path.append(os.path.join(dirname, filename))
@@ -134,7 +133,7 @@ def batch_processing(data,filename):
     column_to_encode=source_file.COLUMN_TO_ENCODE
     processed_data=pd.DataFrame()
     
-    if filename=='train_data':
+    if filename==source_file.TRAIN_SET.split('.')[0]:
         for batch_start in range(0, len(data), batch_size):
             batch_end = min(batch_start + batch_size, len(data))
         
@@ -142,7 +141,7 @@ def batch_processing(data,filename):
             batch_data = data.iloc[batch_start:batch_end]
             processed_data = pd.concat([processed_data, process_plot(batch_data,column_to_clean),process_genre(batch_data,column_to_encode)])
 
-    elif filename=='test_data':
+    elif filename==source_file.TEST_SET.split('.')[0]:
         for batch_start in range(0, len(data), batch_size):
             batch_end = min(batch_start + batch_size, len(data))
         
@@ -150,7 +149,7 @@ def batch_processing(data,filename):
             batch_data = data.iloc[batch_start:batch_end]
             processed_data = pd.concat([processed_data, process_plot(batch_data,column_to_clean)]) 
     
-    elif filename=='test_data_solution':
+    elif filename==source_file.TEST_SET_SOLN.split('.')[0]:
         for batch_start in range(0, len(data), batch_size):
             batch_end = min(batch_start + batch_size, len(data))
         

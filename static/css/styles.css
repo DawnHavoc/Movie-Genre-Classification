@@ -1,79 +1,88 @@
-/* Global styles */
-body, html {
-  height: 100%;
+/* Font styles */
+body {
+  font-family: Arial, Helvetica, sans-serif;
   margin: 0;
-}
-
-.background-image {
-  /* background-image: url('your-background-image.jpg'); */
+  padding: 0;
   background-size: cover;
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
+  background-attachment: fixed; 
+}
+/* Actual Header styles */
+.Actual_Header {
+  margin: 10px;
+  border-radius: 5px;
+  background: black;
+  padding: 10px;
 }
 
 /* Header styles */
-.header {
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 20px;
-  text-align: center;
+.Header {
+  background: #F5C518;
+    text-align: left;
+  
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    height: 40px;
+    width: 25%;
+}
+
+.Heading h1 {
+  font-size: 2em;
+  color: #000; 
+  
+}
+.Heading h2 {
+  font-size: 1.5em;
+  color: #000;
+  text-align: left;
+}
+
+/* Button styles */
+.button {
+  background-color: #F5C518;
+  color: #000; 
+  border: none;
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin: 0 auto; /* Horizontally center the button */
+}
+
+.button:hover {
+  background-color: #E5B417; /* Slightly darker yellow on hover */
+}
+
+/* Textarea styles */
+.textarea {
+  width: 97%;
+  height: 100px; /* Adjust the height as needed */
+  border: 1px solid #666; /* Gray border */
+  padding: 10px;
+  border-radius: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  
 }
 
 /* Footer styles */
 .footer {
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 10px;
+  background-color: #000; /* Black background */
+  color: #FFF; /* White text */
   text-align: center;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
+  padding: 10px;
 }
 
-/* Container styles */
-.container {
-  background-color: rgba(255, 255, 255, 0.8); /* White background with some transparency */
+/* Central panel styles */
+.CentralPanel {
+  /* text-align: center; */
   padding: 20px;
-  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
+  max-width: 800px; /* Adjust the maximum width as needed */
+  margin: 0 auto; /* Center the panel horizontally */
+}
+
+/* Genre container styles */
+.genre-container {
   margin-top: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Heading styles */
-h2 {
-  color: #333;
-}
-
-/* Form styles */
-.form-control {
-  margin: 10px 0;
-}
-
-/* Button styles */
-.btn-primary {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-/* Textarea styles */
-textarea {
-  resize: none;
-}
-
-/* Predicted Genre styles */
-.predicted-genre {
-  font-weight: bold;
-  color: #007bff;
-  font-size: 20px;
 }

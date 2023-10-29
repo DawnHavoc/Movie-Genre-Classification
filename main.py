@@ -1,21 +1,32 @@
 # Import necessary libraries
 import pickle
 from flask import Flask, request, render_template
+import os
 
 import re
 import string
 from nltk.corpus import stopwords
-
 from nltk.stem import PorterStemmer
 import nltk
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
 
 from sklearn.feature_extraction.text import TfidfVectorizer
+import importlib.util
+
+
+# Specify the absolute path to source_file.py
+source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
+
+
+# Use importlib to import source_file
+spec = importlib.util.spec_from_file_location("__init__", source_file_path)
+source_file = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(source_file)
 
 # Download the NLTK data needed for tokenization and stopwords
-nltk.download('punkt')
-nltk.download('stopwords')
+nltk.download(source_file.NLTK_DOWNLOAD)
+nltk.download(source_file.NLTK_STOPWORDS)
 
 app = Flask(__name__, template_folder='templates')
 
@@ -89,8 +100,10 @@ def predict_genre(plot_text):
   
     # Now, you can use the loaded label encoder to decode labels
     decoded_genre = loaded_label_encoder.inverse_transform(predicted_genre)
+    # You can convert it to a string and then strip the brackets.
+    decoded_genre_str = str(decoded_genre[0]).strip("[]")
     # Return the predicted genre
-    return decoded_genre
+    return decoded_genre_str
 
 # Define a route to handle the HTML form
 @app.route('/', methods=['GET', 'POST'])

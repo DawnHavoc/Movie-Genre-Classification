@@ -54,7 +54,6 @@ def convert_to_csv(destination_folder):
     text_file_delimiter = ":::"
     
     # Specify the character encoding 
-    # input_encoding=detect_encoding('D:/Projects/Movie-Genre-Classification/datasets/Genre Classification Dataset/train_data.txt')
     input_encoding=source_file.INPUT_ENCODING
     output_encoding =source_file.OUTPUT_ENCODING
     
@@ -66,7 +65,7 @@ def convert_to_csv(destination_folder):
             # file_name, file_extension = os.path.splitext(os.path.basename(file_path))
                    
                 writer = csv.writer(csv_file)
-                if os.path.splitext(os.path.basename(file_path))[0] !='test_data':
+                if os.path.splitext(os.path.basename(file_path))[0] !=source_file.TEST_SET.split('.')[0]:
                     writer.writerow(["ID", "TITLE", "GENRE", "DESCRIPTION"])
                 else:
                     writer.writerow(["ID", "TITLE","DESCRIPTION","GENRE"])
@@ -78,12 +77,6 @@ def convert_to_csv(destination_folder):
 
                     # Write the split values as separate columns in the CSV file
                     writer.writerow(values)
-# # Function to detect encoding
-# def detect_encoding(file_path):
-#     with open(file_path, 'rb') as file:
-#         rawdata = file.read()
-#         result = chardet.detect(rawdata)
-#     return result['encoding']
 
 def main():
     read_data()

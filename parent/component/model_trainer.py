@@ -24,23 +24,19 @@ def tune_model(train_data,X_train):
    
         # Define a range of hyperparameters to search
         param_grid = {
-            # 'C': [0.001, 0.01, 0.1, 1, 10, 100],  # Inverse of regularization strength
-            # 'penalty': ['l1', 'l2'],  # Regularization type
-            # 'solver': ['liblinear', 'saga']  # Solver algorithm
-            'C': [0.01, 0.1, 1],  # Focus on these values
-            'penalty': ['l1', 'l2'],
-            'solver': ['liblinear', 'saga']
+           
+            'C':  [0.01,0.1, 1],  
+            'penalty': ['l2'],
+            'solver': ['liblinear']
         }
 
         # Create a Logistic Regression model
         model = LogisticRegression(max_iter=1000)
-
-        # Perform grid search
-        grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy')
-        grid_search.fit(X_train,  train_data[source_file.LABEL_ENCODED_COLUMN])
+        random_search = RandomizedSearchCV(model, param_distributions=param_grid, n_iter=3, cv=5, scoring='accuracy')
+        random_search.fit(X_train, train_data[source_file.LABEL_ENCODED_COLUMN])
 
         # Get the best hyperparameters
-        return grid_search.best_params_, grid_search.best_estimator_
+        return random_search.best_params_, random_search.best_estimator_
 
 def train_model(best_model,test_data_soln,X_test):
     y_pred = best_model.predict(X_test)
@@ -49,8 +45,7 @@ def train_model(best_model,test_data_soln,X_test):
 
     print("Classification Report of Logistic Regression:")
     print(report)
-    print(f'Logistic Regression Accuracy: {accuracy}')
-
+    print(f"Logistic Regression Accuracy: {accuracy * 100:.2f}%")
 
 
 def getfile():
