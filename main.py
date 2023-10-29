@@ -15,12 +15,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import importlib.util
 
 
-# Specify the absolute path to source_file.py
-source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
+source_file_path = "parent/constants/__init__.py"
 
-
-# Use importlib to import source_file
-spec = importlib.util.spec_from_file_location("__init__", source_file_path)
+# Use importlib to import the module
+spec = importlib.util.spec_from_file_location('__init__', source_file_path)
 source_file = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(source_file)
 
@@ -28,19 +26,18 @@ spec.loader.exec_module(source_file)
 nltk.download(source_file.NLTK_DOWNLOAD)
 nltk.download(source_file.NLTK_STOPWORDS)
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__,static_folder='static', static_url_path='/static')
 
 # Load the pickled model
-with open('D:/Projects/Movie-Genre-Classification/models/linear_regression_model.pkl', 'rb') as file:
+with open(source_file.PRED_MODEL_PATH, 'rb') as file:
     model = pickle.load(file)
 
 # Load the TF-IDF vectorizer
-tfidf_vectorizer_path = 'D:/Projects/Movie-Genre-Classification/models/tfidf_vectorizer.pkl'
-with open(tfidf_vectorizer_path, 'rb') as file:
+with open(source_file.TFIDF_PATH, 'rb') as file:
     tfidf_vectorizer = pickle.load(file)
 
 # Open the file in binary read mode and load the label encoder
-with open('D:/Projects/Movie-Genre-Classification/models/label_encoding.pkl', 'rb') as file:
+with open(source_file.ENCODING_PATH, 'rb') as file:
     loaded_label_encoder = pickle.load(file)
 
 def remove_html_tags(text):

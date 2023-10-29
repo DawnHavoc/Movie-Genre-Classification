@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 import importlib.util
-from tqdm import tqdm
+
 
 
 # Specify the absolute path to source_file.py
@@ -36,7 +36,7 @@ def tune_model(train_data,X_train):
         random_search.fit(X_train, train_data[source_file.LABEL_ENCODED_COLUMN])
 
         # Get the best hyperparameters
-        return random_search.best_params_, random_search.best_estimator_
+        return  random_search.best_estimator_
 
 def train_model(best_model,test_data_soln,X_test):
     y_pred = best_model.predict(X_test)
@@ -76,7 +76,7 @@ def main():
     X_train_tfidf = tfidf_vectorizer.fit_transform(pd.read_csv(train_set_file)[source_file.COLUMN_TO_CLEAN])
     X_test_tfidf = tfidf_vectorizer.transform(pd.read_csv(test_set_file)[source_file.COLUMN_TO_CLEAN])
 
-    parameters,model=tune_model(pd.read_csv(train_set_file),X_train_tfidf)
+    model=tune_model(pd.read_csv(train_set_file),X_train_tfidf)
     train_model(model,pd.read_csv(test_set_soln),X_test_tfidf)
 if __name__ == "__main__":
     main()

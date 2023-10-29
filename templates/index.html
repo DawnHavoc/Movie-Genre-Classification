@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="D:/Projects/Movie-Genre-Classification/static/css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body style="background-image: url('file:///D:/Projects/Movie-Genre-Classification/static/images/background.jpg');">
+<body >
     
     
         <div class = "Header">
-          
-            <h1 class= "Heading" > Movie Genre Prediction </h1>
-           
-        </div>
-    
-   
-    <div class="CentralPanel" >
+          <h1 class= "Heading" > Movie Genre Prediction </h1>
+           </div>
+ 
+           <div class="CentralPanel" >
         <div class="center">
            <h2>Predict a Movie's Genre</h2>
         <form method="post" action="/">
