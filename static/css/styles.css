@@ -16,18 +16,18 @@ body {
   background: #F5C518;
   text-align: center; /* Horizontal centering */
   font-family: "Helvetica Neue", Arial, sans-serif;
-  height: 60px;
+  height: 40px;
   width:50%;
-/*  
-  align-items: center; Vertically center the header */
+  align-items: center; /*Vertically center the header  */
   border-radius: 5px;
   margin: 10px auto; /* Horizontally center the header */
 }
 
 /* Heading styles */
 .Heading h1 {
-  font-size: 2em;
+  font-size: 2.5em;
   color: #000;
+
  
 }
 .Heading h2 {
@@ -35,6 +35,7 @@ body {
   color: #000;
   text-align: left;
 }
+
 
 /* Button styles */
 .button {
@@ -48,10 +49,10 @@ body {
 }
 
 .button:hover {
-  background-color: #E5B417; /* Slightly darker yellow on hover */
+  background-color: #E5B417; 
 }
 
-/* Textarea styles */
+
 .textarea {
   width: 97%;
   height: 100px; 
@@ -59,11 +60,11 @@ body {
   padding: 10px;
   border-radius: 5px;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 20px;
+  font-size: 15px;
   
 }
 
-/* Footer styles */
+
 .footer {
   background-color: #000; 
   color: #FFF;
@@ -75,18 +76,18 @@ body {
   bottom: 0;
 }
 
-/* Central panel styles */
+
 .CentralPanel {
- 
+
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
-  max-width: 800px; /* Adjust the maximum width as needed */
-  margin: 0 auto; /* Center the panel horizontally */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* subtle shadow */
+  max-width: 800px; 
+  margin: 80px auto 0 auto; /* 80px top margin, horizontally centered */
 }
 
-/* Genre container styles */
+
 .genre-container {
   margin-top: 20px;
 }
