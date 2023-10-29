@@ -7,28 +7,27 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed; 
 }
-/* Actual Header styles */
-.Actual_Header {
-  margin: 10px;
-  border-radius: 5px;
-  background: black;
-  padding: 10px;
-}
+
 
 /* Header styles */
+
 .Header {
   background: #F5C518;
-    text-align: left;
-  
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    height: 40px;
-    width: 25%;
+  text-align: center; /* Horizontal centering */
+   font-family: "Helvetica Neue", Arial, sans-serif;
+  height: 60px;
+  width:50%;
+/*  
+  align-items: center; Vertically center the header */
+  border-radius: 5px;
+  margin: 10px auto; /* Horizontally center the header */
 }
 
+/* Heading styles */
 .Heading h1 {
   font-size: 2em;
-  color: #000; 
-  
+  color: #000;
+ 
 }
 .Heading h2 {
   font-size: 1.5em;
@@ -69,6 +68,10 @@ body {
   color: #FFF; /* White text */
   text-align: center;
   padding: 10px;
+  position: fixed; /* Fixed positioning to keep it at the bottom */
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* Central panel styles */
