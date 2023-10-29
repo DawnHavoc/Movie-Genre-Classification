@@ -3,7 +3,7 @@ import zipfile
 import subprocess
 import csv
 import importlib.util
-import sys
+
 
 # Specify the absolute path to source_file.py
 source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))

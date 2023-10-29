@@ -11,7 +11,6 @@ body {
 
 
 /* Header styles */
-
 .Header {
   background: #F5C518;
   text-align: center; /* Horizontal centering */
@@ -52,7 +51,7 @@ body {
   background-color: #E5B417; 
 }
 
-
+/* Textarea styles */
 .textarea {
   width: 97%;
   height: 100px; 
@@ -64,7 +63,7 @@ body {
   
 }
 
-
+/* footer styles */
 .footer {
   background-color: #000; 
   color: #FFF;
@@ -76,7 +75,7 @@ body {
   bottom: 0;
 }
 
-
+/* central panel styles */
 .CentralPanel {
 
   padding: 20px;

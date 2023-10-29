@@ -1,7 +1,7 @@
 # Import necessary libraries
 import pickle
 from flask import Flask, request, render_template
-import os
+
 
 import re
 import string
@@ -11,13 +11,13 @@ import nltk
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
 
-from sklearn.feature_extraction.text import TfidfVectorizer
+
 import importlib.util
 
 
 source_file_path = "parent/constants/__init__.py"
 
-# Use importlib to import the module
+
 spec = importlib.util.spec_from_file_location('__init__', source_file_path)
 source_file = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(source_file)
@@ -44,7 +44,7 @@ def remove_html_tags(text):
     soup = BeautifulSoup(text, "html.parser")
     return soup.get_text()
 
-# Define a function to remove emojis using a regular expression
+# remove emojis using a regular expression
 def remove_emojis(text):
     emoji_pattern = re.compile("["
                            u"\U0001F600-\U0001F64F"  # Emoticons
@@ -85,24 +85,23 @@ def process_plot(sentence):
 
     return " ".join(tokens)
 
-# Define a function to preprocess the input and make predictions
+
 def predict_genre(plot_text):
   # Clean and preprocess the input plot
     cleaned_plot = process_plot(plot_text)
-    
-    # Use the pre-trained TF-IDF vectorizer to transform the input text
+     # Use the pre-trained TF-IDF vectorizer to transform the input text
     input_tfidf = tfidf_vectorizer.transform([cleaned_plot])
-    
+    #make predictions 
     predicted_genre = model.predict(input_tfidf)
   
-    # Now, you can use the loaded label encoder to decode labels
+    #  use the loaded label encoder to decode labels
     decoded_genre = loaded_label_encoder.inverse_transform(predicted_genre)
-    # You can convert it to a string and then strip the brackets.
+    # convert it to a string and then strip the brackets
     decoded_genre_str = str(decoded_genre[0]).strip("[]")
-    # Return the predicted genre
+  
     return decoded_genre_str
 
-# Define a route to handle the HTML form
+#  route to handle the HTML form
 @app.route('/', methods=['GET', 'POST'])
 def predict_movie_genre():
     if request.method == 'POST':
